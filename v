@@ -3,7 +3,19 @@
 use 5.012;
 use strict;
 use warnings;
-use List::MoreUtils qw/all part/;
+
+sub all(&@) {
+  my $pred = shift;
+  for (@_) { return unless $pred->($_); }
+  return 1;
+}
+
+sub part(&@) {
+  my $index = shift;
+  my @partitioned;
+  push @{ $partitioned[ $index->($_) ] //= [] }, $_ for @_;
+  return @partitioned;
+}
 
 my ($opts, $files) = part { /^-/ ? 0 : 1 } @ARGV;
 $opts //= [];
